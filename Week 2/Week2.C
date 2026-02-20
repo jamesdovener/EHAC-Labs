@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-
+#include <unistd.h>
 void writeToFile(){
-    FILE *fptr1;
-    FILE *fptr2;
+
+
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    printf("Current working directory: %s\n", cwd);
 
     char input[100];
     char inputFile[100];
@@ -12,30 +14,43 @@ void writeToFile(){
 
     printf("Enter input file (leave empty to write input manually):\n");
     fgets(inputFile, 100, stdin);
-    inputFile[strlen(inputFile)-1] = '\0';
-
-    printf("Enter output file:\n");
-    scanf("%s", outputFile);
-    fptr2 = fopen(outputFile, "w");
-
-    if (inputFile == "\0") {
-        printf("Enter text to be written to output file:\n");
-        scanf("%s", input);
-        fprintf(fptr2, "%s", input);
-    }else{
-        fptr1 = fopen(inputFile, "r");
-        fgets(input, 100, fptr1);
-        fprintf(fptr2, "%s", input);
+    if (inputFile[strlen(inputFile) - 1] == '\n') {
+        inputFile[strlen(inputFile) - 1] = '\0';
     }
 
-    fclose(fptr1);
+    printf("Enter output file:\n");
+    fgets(outputFile,100, stdin);
+    if (outputFile[strlen(outputFile) - 1] == '\n') {
+        outputFile[strlen(outputFile) - 1] = '\0';
+    }
+    FILE *fptr2 = fopen(outputFile, "w");
+
+    if ( strcmp(inputFile, "\n")==0 ) {
+        printf("Enter text to be written to output file:\n");
+        fgets(input, 100, stdin);
+        printf("You entered input: %s!",input);
+        fprintf(fptr2, "%s", input);
+    }else{
+        FILE *fptr1 = fopen(inputFile, "r");
+        fgets(input, 100, fptr1);
+        fprintf(fptr2, "%s", input);
+        fclose(fptr1);
+    }
+
     fclose(fptr2);
 }
 
 void readFile(){
-    FILE *fptr1;
+    char input[100];
 
-    fptr1 = fopen("output.txt", "r");
+    printf("Enter path of file you would like to read:\n");
+
+    fgets(input,100,stdin);
+    if (input[strlen(input) - 1] == '\n') {
+        input[strlen(input) - 1] = '\0';
+    }
+
+    FILE *fptr1 = fopen(input, "r");
 
     char fileString[100];
 
